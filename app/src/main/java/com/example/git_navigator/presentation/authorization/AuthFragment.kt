@@ -1,5 +1,6 @@
 package com.example.git_navigator.presentation.authorization
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -48,6 +50,8 @@ class AuthFragment : Fragment(), inputInterface {
                     name = user.login
                     viewModel.response(token, name)
                     success(token)
+                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(view?.windowToken, 0)
                     Log.d("name", "$name")
                 }
             })

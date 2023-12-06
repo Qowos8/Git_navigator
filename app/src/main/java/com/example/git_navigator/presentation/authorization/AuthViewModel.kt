@@ -11,8 +11,7 @@ import com.example.git_navigator.data.network.Repository
 import com.example.git_navigator.data.network.UserGit
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterface, inputInterface,
-    Authorization_interface {
+class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterface, inputInterface, Authorization_interface {
     private val _userToken = MutableLiveData<String>()
     val repList = MutableLiveData<List<Repository>?>()
     val reposList = MutableLiveData<Repository>()
@@ -35,19 +34,14 @@ class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterf
     }
 
     fun response(userToken: String, name: String) {
-        var bitch = false
         viewModelScope.launch {
             try {
                 val response = service.getUserRepos("Bearer $userToken", name)
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {
-                        for (i in 0..10) {
-                            val repository = body[i]
-                            repList.value = listOf(repository)
-                        }
-                        bitch = true
-                        //Log.d("rep", "$repository")
+                        val repositories = body.take(10)
+                        repList.value = repositories
                     }
                 } else {
                     Log.d("shit", "response failed")
@@ -57,6 +51,7 @@ class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterf
             }
         }
     }
+
 
     override suspend fun getAccessToken(clientId: String, clientSecret: String, code: String) {
         TODO("Not yet implemented")

@@ -40,7 +40,7 @@ class RepositoriesListFragment : Fragment() {
         Log.d("replistfragment", "$input")
         Log.d("replistName", "$name")
 
-        val layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView = binding.recycler
         recyclerView.layoutManager = layoutManager
         viewModel = ViewModelProvider(
