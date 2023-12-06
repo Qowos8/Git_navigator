@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#0D1117">
+
+    <ImageView
+        android:id="@+id/blocks"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:src="@drawable/list_item"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+    <TextView
+        android:id="@+id/name_rep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="moko-web3"
+        android:textSize="16sp"
+        android:textColor="#58A6FF"
+        app:layout_constraintTop_toTopOf="@id/blocks"
+        app:layout_constraintStart_toStartOf="@id/blocks"
+        android:layout_margin="16dp"
+        />
+    <TextView
+        android:id="@+id/review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ethereum Web3 implementation for mobile (android\n&amp; ios) Kotlin Multiplatform development"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/name_rep"
+        app:layout_constraintStart_toStartOf="@id/blocks"
+        android:layout_marginStart="16dp"
+        />
+    <TextView
+        android:id="@+id/language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kotlin"
+        app:layout_constraintTop_toTopOf="@id/name_rep"
+        app:layout_constraintEnd_toEndOf="@id/blocks"
+        android:textColor="#A37AEE"
+        android:layout_marginEnd="16dp"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
