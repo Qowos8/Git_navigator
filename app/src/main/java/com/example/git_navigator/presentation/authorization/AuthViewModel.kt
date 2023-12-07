@@ -11,19 +11,15 @@ import com.example.git_navigator.data.network.Repository
 import com.example.git_navigator.data.network.UserGit
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterface, inputInterface, Authorization_interface {
-    private val _userToken = MutableLiveData<String>()
+class AuthViewModel(private val service: GitHubService) : ViewModel() {
     val repList = MutableLiveData<List<Repository>?>()
-    val reposList = MutableLiveData<Repository>()
-    val userToken: LiveData<String> = _userToken
     val user = MutableLiveData<UserGit?>()
-    val userName = MutableLiveData<String>()
 
     fun responseAuth(userToken: String) {
         var rs: UserGit? = null
         viewModelScope.launch {
             try {
-                rs = service.getUser("Bearer $userToken")
+                rs = service.getUser()
                 user.value = rs
                 Log.d("user", "${user.value}")
             } catch (e: Exception) {
@@ -33,49 +29,25 @@ class AuthViewModel(private val service: GitHubService) : ViewModel(), ApiInterf
         }
     }
 
-    fun response(userToken: String, name: String) {
+    fun response(name: String): Boolean {
+        var isSuccess = false
         viewModelScope.launch {
             try {
-                val response = service.getUserRepos("Bearer $userToken", name)
+                val response = service.getUserRepos(name)
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {
                         val repositories = body.take(10)
                         repList.value = repositories
+                        isSuccess = true
                     }
                 } else {
-                    Log.d("shit", "response failed")
+                    Log.d("fun response", "response failed")
                 }
             } catch (e: Exception) {
                 Log.d("response", "${e.message}")
             }
         }
+        return isSuccess
     }
-
-
-    override suspend fun getAccessToken(clientId: String, clientSecret: String, code: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getUserToken(token: String) {
-        //RetrofitBuilder.create()
-        //val response = ApiInterface.get
-    }
-
-    override fun check() {
-        TODO("Not yet implemented")
-    }
-
-    override fun success() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getTextInput(): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateInput(input: String) {
-        _userToken.value = input
-    }
-
 }

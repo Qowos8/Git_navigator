@@ -5,18 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.git_navigator.R
 import com.example.git_navigator.data.network.RetrofitBuilder
 import com.example.git_navigator.databinding.ListRepositoryBinding
-import com.example.git_navigator.presentation.authorization.AuthFactory
+import com.example.git_navigator.presentation.authorization.AuthViewModelFactory
 import com.example.git_navigator.presentation.authorization.AuthViewModel
-import kotlinx.coroutines.launch
 
 class RepositoriesListFragment : Fragment() {
     private lateinit var binding: ListRepositoryBinding
@@ -28,7 +24,7 @@ class RepositoriesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.list_repository, container, false)
+        binding = ListRepositoryBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -45,14 +41,13 @@ class RepositoriesListFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         viewModel = ViewModelProvider(
             this,
-            AuthFactory(RetrofitBuilder.create(input!!))
+            AuthViewModelFactory(RetrofitBuilder.create(input!!))
         )[AuthViewModel::class.java]
         viewModel.repList.observe(viewLifecycleOwner) { repository ->
             adapter.setData(repository!!)
             recyclerView.adapter = adapter
         }
-        val data = viewModel.response(input, name!!)
-        Log.d("data", "$data")
+        viewModel.response(name!!)
         adapter = listAdapter(requireContext(), name, input)
     }
 }

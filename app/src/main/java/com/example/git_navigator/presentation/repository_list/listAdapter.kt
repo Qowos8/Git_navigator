@@ -48,8 +48,7 @@ class listAdapter(context: Context, val name: String, val token: String): Recycl
     }
 
     override suspend fun loadDataFromNetwork(service: GitHubService, userToken: String, holder: ListViewHolder) {
-        val handler = android.os.Handler(Looper.getMainLooper())
-        val response = service.getUserRepos("Bearer $userToken", name)
+        val response = service.getUserRepos(name)
         if(response.isSuccessful){
             val body = response.body()
             if (body != null) {

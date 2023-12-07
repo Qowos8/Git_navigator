@@ -12,24 +12,20 @@ object RetrofitBuilder {
     private const val clientSecret = "d488d7ea8158e55aa9a4940c2fcaeb7d7b6ea88a"
     private const val CALLBACK_URL = "ru.kts.oauth://github.com/callback"
     private const val AUTH_TOKEN = "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"
-    fun create(usertoken: String): GitHubService {
+    fun create(authToken: String): GitHubService {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addInterceptor(AuthInterceptor(usertoken))
-            .build()
-        val clientik = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addInterceptor(RepInterceptor(authToken))
             .build()
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(clientik)
+            .client(client)
             .build()
 
         return retrofit.create(GitHubService::class.java)
     }
-
 
 
 }

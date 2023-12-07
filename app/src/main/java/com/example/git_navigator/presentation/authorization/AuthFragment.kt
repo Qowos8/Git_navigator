@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,42 +21,45 @@ import com.example.git_navigator.presentation.repository_list.RepositoriesListFr
 class AuthFragment : Fragment(), inputInterface {
     private lateinit var binding: AuthFragmentBinding
     private lateinit var viewModel: AuthViewModel
-    private var token = ""
-    private var textWatcher = createTextWatcher()
     private lateinit var name: String
-
+    private lateinit var inputToken: String
+    private val textWatcher = createTextWatcher()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.inflate(inflater, R.layout.auth_fragment, container, false)
-        val button = binding.button
+        binding = AuthFragmentBinding.inflate(layoutInflater)
+        val layoutParams = layoutParams()
+        binding.frameContainerr.layoutParams = layoutParams
         binding.logEdit.addTextChangedListener(textWatcher)
+
+        val button = binding.button
         button.setOnClickListener {
-            token = getTextInput()
-            Log.d("input", "$token")
+            inputToken = getTextInput()
+            Log.d("input", "$inputToken")
             viewModel = ViewModelProvider(
                 this,
-                AuthFactory(RetrofitBuilder.create(token))
+                AuthViewModelFactory(RetrofitBuilder.create(inputToken))
             )[AuthViewModel::class.java]
-            val user = viewModel.responseAuth(token)
+            val user = viewModel.responseAuth(inputToken)
             Log.d("user", "$user")
             viewModel.user.observe(viewLifecycleOwner, Observer { user ->
                 if (user != null) {
                     Log.d("users", "${user.id}, ${user.name}, ${user.email}, ${user.login}")
                     name = user.login
-                    viewModel.response(token, name)
-                    success(token)
-                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(view?.windowToken, 0)
-                    Log.d("name", "$name")
+                    if (viewModel.response(name)) {
+                        invalidToken()
+                    } else {
+                        openRepos(inputToken)
+                        Log.d("name", "$name")
+                    }
+                } else {
+                    invalidToken()
                 }
             })
         }
-
-
         return binding.root
     }
 
@@ -70,7 +72,7 @@ class AuthFragment : Fragment(), inputInterface {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                token = p0.toString()
+                inputToken = p0.toString()
             }
         }
     }
@@ -82,8 +84,11 @@ class AuthFragment : Fragment(), inputInterface {
         return inputToken
     }
 
-    private fun success(input: String) {
+    override fun openRepos(input: String) {
         val fragment = RepositoriesListFragment()
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
         val bundle = Bundle()
         bundle.putString("key", "$input")
         bundle.putString("user", name)
@@ -93,5 +98,15 @@ class AuthFragment : Fragment(), inputInterface {
             .replace(R.id.frame_containerr, fragment)
             .commit()
 
+    }
+
+    fun layoutParams() = ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
+    override fun invalidToken() {
+        val editText = binding.logEdit
+        editText.error = getString(R.string.error_text)
     }
 }

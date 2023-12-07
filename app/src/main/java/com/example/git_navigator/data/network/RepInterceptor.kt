@@ -3,7 +3,7 @@ package com.example.git_navigator.data.network
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class repInterceptor(private val inputToken: String) : Interceptor {
+class RepInterceptor(private val inputToken: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val originalHttpUrl = originalRequest.url
