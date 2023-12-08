@@ -1,24 +1,18 @@
 package com.example.git_navigator.presentation.repository_list
 
 import android.content.Context
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.git_navigator.R
 import com.example.git_navigator.data.network.GitHubService
 import com.example.git_navigator.data.network.Repository
 import com.example.git_navigator.databinding.ListBlocksBinding
-import com.example.git_navigator.presentation.networkInterface
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.git_navigator.presentation.NetworkInterface
 
-class listAdapter(context: Context, val name: String, val token: String): RecyclerView.Adapter<listAdapter.ListViewHolder>(), networkInterface {
-    private var onListClickListener: listRepository? = null
+class listAdapter(context: Context, val name: String, val token: String): RecyclerView.Adapter<listAdapter.ListViewHolder>(), NetworkInterface {
+    private var onListClickListener: ListRepository? = null
     private var items: List<Repository>? = null
     fun setData(data: List<Repository>) {
         this.items = data

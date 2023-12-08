@@ -18,7 +18,7 @@ import com.example.git_navigator.data.network.RetrofitBuilder
 import com.example.git_navigator.databinding.AuthFragmentBinding
 import com.example.git_navigator.presentation.repository_list.RepositoriesListFragment
 
-class AuthFragment : Fragment(), inputInterface {
+class AuthFragment : Fragment(), InputInterface {
     private lateinit var binding: AuthFragmentBinding
     private lateinit var name: String
     private lateinit var inputToken: String

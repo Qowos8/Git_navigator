@@ -1,5 +1,5 @@
 package com.example.git_navigator.presentation.repository_list
 
-interface listRepository {
+interface ListRepository {
     fun onListClicked()
 }
