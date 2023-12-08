@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 class AuthViewModel(private val service: GitHubService) : ViewModel() {
     val repList = MutableLiveData<List<Repository>?>()
     val user = MutableLiveData<UserGit?>()
-
     fun responseAuth(userToken: String) {
         var rs: UserGit? = null
         viewModelScope.launch {
@@ -28,7 +27,6 @@ class AuthViewModel(private val service: GitHubService) : ViewModel() {
 
         }
     }
-
     fun response(name: String): Boolean {
         var isSuccess = false
         viewModelScope.launch {

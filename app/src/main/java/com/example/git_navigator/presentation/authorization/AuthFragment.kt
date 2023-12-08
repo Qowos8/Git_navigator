@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.git_navigator.R
 import com.example.git_navigator.data.network.RetrofitBuilder
 import com.example.git_navigator.databinding.AuthFragmentBinding
@@ -20,9 +20,9 @@ import com.example.git_navigator.presentation.repository_list.RepositoriesListFr
 
 class AuthFragment : Fragment(), inputInterface {
     private lateinit var binding: AuthFragmentBinding
-    private lateinit var viewModel: AuthViewModel
     private lateinit var name: String
     private lateinit var inputToken: String
+    private val viewModel: AuthViewModel by viewModels {AuthViewModelFactory(RetrofitBuilder.create(inputToken))}
     private val textWatcher = createTextWatcher()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,20 +31,15 @@ class AuthFragment : Fragment(), inputInterface {
     ): View {
         super.onCreate(savedInstanceState)
         binding = AuthFragmentBinding.inflate(layoutInflater)
-        val layoutParams = layoutParams()
+        val layoutParams = setLayoutParams()
         binding.frameContainerr.layoutParams = layoutParams
         binding.logEdit.addTextChangedListener(textWatcher)
 
         val button = binding.button
         button.setOnClickListener {
             inputToken = getTextInput()
-            Log.d("input", "$inputToken")
-            viewModel = ViewModelProvider(
-                this,
-                AuthViewModelFactory(RetrofitBuilder.create(inputToken))
-            )[AuthViewModel::class.java]
-            val user = viewModel.responseAuth(inputToken)
-            Log.d("user", "$user")
+            Log.d("input", inputToken)
+            viewModel.responseAuth(inputToken)
             viewModel.user.observe(viewLifecycleOwner, Observer { user ->
                 if (user != null) {
                     Log.d("users", "${user.id}, ${user.name}, ${user.email}, ${user.login}")
@@ -53,7 +48,7 @@ class AuthFragment : Fragment(), inputInterface {
                         invalidToken()
                     } else {
                         openRepos(inputToken)
-                        Log.d("name", "$name")
+                        Log.d("name", name)
                     }
                 } else {
                     invalidToken()
@@ -86,12 +81,9 @@ class AuthFragment : Fragment(), inputInterface {
 
     override fun openRepos(input: String) {
         val fragment = RepositoriesListFragment()
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
-        val bundle = Bundle()
-        bundle.putString("key", "$input")
-        bundle.putString("user", name)
+        val bundle = createBundle(input, name)
         fragment.arguments = bundle
 
         parentFragmentManager.beginTransaction()
@@ -100,7 +92,7 @@ class AuthFragment : Fragment(), inputInterface {
 
     }
 
-    fun layoutParams() = ViewGroup.LayoutParams(
+    private fun setLayoutParams() = ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT
     )
@@ -108,5 +100,13 @@ class AuthFragment : Fragment(), inputInterface {
     override fun invalidToken() {
         val editText = binding.logEdit
         editText.error = getString(R.string.error_text)
+    }
+    companion object {
+        fun createBundle(key: String, user: String): Bundle {
+            return Bundle().apply {
+                putString("key", key)
+                putString("user", user)
+            }
+        }
     }
 }
