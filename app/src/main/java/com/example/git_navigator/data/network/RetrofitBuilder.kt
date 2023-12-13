@@ -1,31 +1,36 @@
 package com.example.git_navigator.data.network
 
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Named
 
+@Module
+@InstallIn(ViewModelComponent::class)
 object RetrofitBuilder {
-    private const val AUTH_URL = "https://github.com/login/oauth/authorize"
     private const val BASE_URL = "https://api.github.com/"
-    private const val clientId = "ae6e07869dd3e0de5559"
-    private const val clientSecret = "d488d7ea8158e55aa9a4940c2fcaeb7d7b6ea88a"
-    private const val CALLBACK_URL = "ru.kts.oauth://github.com/callback"
-    private const val AUTH_TOKEN = "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"
-    fun create(authToken: String): GitHubService {
+    @Provides
+    @ViewModelScoped
+    fun create (@Named("authToken") authToken: String): GitHubService {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addInterceptor(RepInterceptor(authToken))
+            .addInterceptor(AuthorizationInterceptor(authToken))
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl("https://api.github.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
 
         return retrofit.create(GitHubService::class.java)
     }
-
-
 }

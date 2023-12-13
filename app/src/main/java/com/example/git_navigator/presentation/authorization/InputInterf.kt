@@ -1,6 +1,6 @@
 package com.example.git_navigator.presentation.authorization
 
-interface InputInterface {
+interface InputInterf {
     fun getTextInput(): String
     fun openRepos(input: String)
     fun invalidToken()

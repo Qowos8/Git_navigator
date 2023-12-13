@@ -2,12 +2,16 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("kotlin-kapt")
-}
+    id ("dagger.hilt.android.plugin")
 
+}
+apply{
+    plugin ("dagger.hilt.android.plugin")
+    plugin ("com.android.application")
+}
 android {
     namespace = "com.example.git_navigator"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.example.git_navigator"
         minSdk = 21
@@ -16,7 +20,6 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -58,4 +60,9 @@ dependencies {
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation (libs.androidx.fragment.ktx)
+    //implementation (libs.androidx.hilt.lifecycle.viewmodel)
+    kapt (libs.androidx.hilt.compiler)
+    implementation (libs.google.dagger.hilt.android)
+    kapt (libs.google.dagger.compiler)
+
 }

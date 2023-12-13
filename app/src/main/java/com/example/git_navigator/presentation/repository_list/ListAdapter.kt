@@ -1,18 +1,13 @@
 package com.example.git_navigator.presentation.repository_list
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.git_navigator.data.network.GitHubService
 import com.example.git_navigator.data.network.Repository
 import com.example.git_navigator.databinding.ListBlocksBinding
-import com.example.git_navigator.presentation.NetworkInterface
 
-class listAdapter(context: Context, val name: String, val token: String): RecyclerView.Adapter<listAdapter.ListViewHolder>(), NetworkInterface {
-    private var onListClickListener: ListRepository? = null
+class ListAdapter(val name: String): RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
     private var items: List<Repository>? = null
     fun setData(data: List<Repository>) {
         this.items = data
@@ -34,15 +29,16 @@ class listAdapter(context: Context, val name: String, val token: String): Recycl
         }
     }
 
-    override fun getItemCount(): Int = items!!.size
+    override fun getItemCount(): Int = items?.size ?: 0
     class ListViewHolder(val binding: ListBlocksBinding): RecyclerView.ViewHolder(binding.root) {
         val name: TextView = binding.nameRep
         val language: TextView = binding.language
         val review: TextView = binding.review
     }
 
-    override suspend fun loadDataFromNetwork(service: GitHubService, userToken: String, holder: ListViewHolder) {
-        val response = service.getUserRepos(name)
+    /*override suspend fun loadDataFromNetwork(@Named("authToken") userToken: String, holder: ListViewHolder) {
+        val retrofit = RetrofitBuilder.create(userToken)
+        val response = retrofit.getUserRepos(name)
         if(response.isSuccessful){
             val body = response.body()
             if (body != null) {
@@ -63,5 +59,5 @@ class listAdapter(context: Context, val name: String, val token: String): Recycl
         else{
             Log.d("loadfromNetwork", "response is not successful")
         }
-    }
+    }*/
 }

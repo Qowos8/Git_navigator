@@ -4,6 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_line">#58A6FF</color>
     <color name="error_color">#B00020</color>
-
+    <color name="background_color">#0D1117</color>
 
 </resources>

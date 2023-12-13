@@ -10,19 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.git_navigator.R
-import com.example.git_navigator.data.network.RetrofitBuilder
 import com.example.git_navigator.databinding.AuthFragmentBinding
 import com.example.git_navigator.presentation.repository_list.RepositoriesListFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class AuthFragment : Fragment(), InputInterface {
+@AndroidEntryPoint
+class AuthFragment : Fragment(), InputInterf {
     private lateinit var binding: AuthFragmentBinding
     private lateinit var name: String
     private lateinit var inputToken: String
-    private val viewModel: AuthViewModel by viewModels {AuthViewModelFactory(RetrofitBuilder.create(inputToken))}
+    private val viewModel: AuthViewModel by viewModels()
     private val textWatcher = createTextWatcher()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,29 +35,11 @@ class AuthFragment : Fragment(), InputInterface {
         super.onCreate(savedInstanceState)
         binding = AuthFragmentBinding.inflate(layoutInflater)
         val layoutParams = setLayoutParams()
-        binding.frameContainerr.layoutParams = layoutParams
-        binding.logEdit.addTextChangedListener(textWatcher)
-
-        val button = binding.button
-        button.setOnClickListener {
-            inputToken = getTextInput()
-            Log.d("input", inputToken)
-            viewModel.responseAuth(inputToken)
-            viewModel.user.observe(viewLifecycleOwner, Observer { user ->
-                if (user != null) {
-                    Log.d("users", "${user.id}, ${user.name}, ${user.email}, ${user.login}")
-                    name = user.login
-                    if (viewModel.response(name)) {
-                        invalidToken()
-                    } else {
-                        openRepos(inputToken)
-                        Log.d("name", name)
-                    }
-                } else {
-                    invalidToken()
-                }
-            })
+        binding.apply {
+            authContainer.layoutParams = layoutParams
+            authEditText.addTextChangedListener(textWatcher)
         }
+        binding.transition()
         return binding.root
     }
 
@@ -73,7 +58,7 @@ class AuthFragment : Fragment(), InputInterface {
     }
 
     override fun getTextInput(): String {
-        val inputText: EditText = binding.logEdit
+        val inputText: EditText = binding.authEditText
         val inputToken = inputText.text.toString()
         Log.d("getTextInput", inputToken)
         return inputToken
@@ -87,7 +72,7 @@ class AuthFragment : Fragment(), InputInterface {
         fragment.arguments = bundle
 
         parentFragmentManager.beginTransaction()
-            .replace(R.id.frame_containerr, fragment)
+            .replace(R.id.auth_container, fragment)
             .commit()
 
     }
@@ -98,15 +83,43 @@ class AuthFragment : Fragment(), InputInterface {
     )
 
     override fun invalidToken() {
-        val editText = binding.logEdit
+        val editText = binding.authEditText
         editText.error = getString(R.string.error_text)
     }
     companion object {
+        const val KEY_STRING = "key"
+        const val USER_KEY = "user"
         fun createBundle(key: String, user: String): Bundle {
             return Bundle().apply {
-                putString("key", key)
-                putString("user", user)
+                putString(KEY_STRING, key)
+                putString(USER_KEY, user)
             }
+        }
+    }
+    private fun showLoading(button: TextView, load: ProgressBar){
+        button.visibility = View.INVISIBLE
+        load.visibility = View.VISIBLE
+    }
+    private fun AuthFragmentBinding.transition(){
+        binding.buttonSign.setOnClickListener {
+            inputToken = getTextInput()
+            Log.d("input", inputToken)
+            viewModel.responseAuth(inputToken)
+            showLoading(binding.textSign, binding.load)
+
+            viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+                if (user != null) {
+                    name = user.login
+                    if (viewModel.requestData(name, inputToken)) {
+                        invalidToken()
+                    } else {
+                        openRepos(inputToken)
+                        Log.d("name", name)
+                    }
+                } else {
+                    invalidToken()
+                }
+            })
         }
     }
 }

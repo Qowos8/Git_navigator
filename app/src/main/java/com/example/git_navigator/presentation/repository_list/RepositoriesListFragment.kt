@@ -8,18 +8,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.git_navigator.data.network.RetrofitBuilder
 import com.example.git_navigator.databinding.ListRepositoryBinding
+import com.example.git_navigator.presentation.authorization.AuthFragment.Companion.KEY_STRING
+import com.example.git_navigator.presentation.authorization.AuthFragment.Companion.USER_KEY
 import com.example.git_navigator.presentation.authorization.AuthViewModel
-import com.example.git_navigator.presentation.authorization.AuthViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
     private lateinit var binding: ListRepositoryBinding
-    private lateinit var adapter: listAdapter
-    private lateinit var input: String
-    private val viewModel: AuthViewModel by viewModels {AuthViewModelFactory(RetrofitBuilder.create(input))}
-    private lateinit var recyclerView: RecyclerView
+    private val input: String by lazy { arguments?.getString(KEY_STRING).toString() }
+    private val viewModel: AuthViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,28 +26,27 @@ class RepositoriesListFragment : Fragment() {
     ): View {
         binding = ListRepositoryBinding.inflate(layoutInflater)
         val layoutParams = setLayoutParams()
-        binding.frameL.layoutParams = layoutParams
+        binding.frameContainer.layoutParams = layoutParams
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        input = arguments?.getString("key").toString()
-        val name = arguments?.getString("user")
+        val name = arguments?.getString(USER_KEY)
         Log.d("replistfragment", input)
         Log.d("replistName", "$name")
+        val linearLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val listAdapter = ListAdapter(name!!)
 
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        recyclerView = binding.recycler
-        recyclerView.layoutManager = layoutManager
-
-        viewModel.repList.observe(viewLifecycleOwner) { repository ->
-            adapter.setData(repository!!)
-            recyclerView.adapter = adapter
+        binding.recycler.apply {
+            layoutManager = linearLayoutManager
+            adapter = listAdapter
         }
-        viewModel.response(name!!)
-        adapter = listAdapter(requireContext(), name, input)
+        viewModel.repList.observe(viewLifecycleOwner) { repository ->
+            listAdapter.setData(repository!!)
+        }
+        viewModel.requestData(name, input)
     }
 
     private fun setLayoutParams() = ViewGroup.LayoutParams(

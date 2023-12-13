@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Git_Navigator</string>
     <string name="error_text">Invalid token</string>
+    <string name="personal_access_token">Personal access token</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="repositories">Repositories</string>
 </resources>
