@@ -1,6 +1,6 @@
 package com.example.git_navigator.domain.entity
 
-data class repositori_list(
+data class RepositoryList(
     val id: Int,
     val name: String,
     val review: String,
