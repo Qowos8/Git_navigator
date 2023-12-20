@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
-
+    id ("org.jetbrains.kotlin.plugin.serialization") version "2.0.0-Beta2"
 }
 apply{
     plugin ("dagger.hilt.android.plugin")
@@ -55,7 +55,7 @@ dependencies {
     implementation (libs.okhttp)
     implementation (libs.logging.interceptor)
     implementation (libs.glide)
-    implementation (libs.converter.gson)
+    //implementation (libs.converter.gson)
     implementation (libs.kotlinx.coroutines.android)
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx)
@@ -64,5 +64,12 @@ dependencies {
     kapt (libs.androidx.hilt.compiler)
     implementation (libs.google.dagger.hilt.android)
     kapt (libs.google.dagger.compiler)
+
+    //implementation (libs.kotlinx.serialization.json.v160)
+    //implementation (libs.converter.moshi)
+    //implementation (libs.converter.kotlinx.serialization)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+
+
 
 }

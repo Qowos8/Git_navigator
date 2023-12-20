@@ -1,5 +1,4 @@
 package com.example.git_navigator.presentation.authorization
-
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -9,20 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.git_navigator.R
-import com.example.git_navigator.databinding.AuthFragmentBinding
+import com.example.git_navigator.databinding.FragmentAuthorizationBinding
 import com.example.git_navigator.presentation.repository_list.RepositoriesListFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AuthFragment : Fragment(), InputInterf {
-    private lateinit var binding: AuthFragmentBinding
+    private lateinit var binding: FragmentAuthorizationBinding
     private lateinit var name: String
     private lateinit var inputToken: String
     private val viewModel: AuthViewModel by viewModels()
@@ -33,13 +32,12 @@ class AuthFragment : Fragment(), InputInterf {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        binding = AuthFragmentBinding.inflate(layoutInflater)
-        val layoutParams = setLayoutParams()
+        binding = FragmentAuthorizationBinding.inflate(inflater, container, false)
         binding.apply {
-            authContainer.layoutParams = layoutParams
             authEditText.addTextChangedListener(textWatcher)
+            setupButton()
+            setupViewModel()
         }
-        binding.transition()
         return binding.root
     }
 
@@ -58,68 +56,79 @@ class AuthFragment : Fragment(), InputInterf {
     }
 
     override fun getTextInput(): String {
-        val inputText: EditText = binding.authEditText
-        val inputToken = inputText.text.toString()
+        val inputToken = binding.authEditText.text.toString()
         Log.d("getTextInput", inputToken)
         return inputToken
     }
 
-    override fun openRepos(input: String) {
+    override fun openRepos(input: String, login: String) {
         val fragment = RepositoriesListFragment()
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
-        val bundle = createBundle(input, name)
+        val bundle = createBundle(input, login)
         fragment.arguments = bundle
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.auth_container, fragment)
+            .addToBackStack(null)
             .commit()
-
     }
 
-    private fun setLayoutParams() = ViewGroup.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    )
-
-    override fun invalidToken() {
+    override fun onInvalidToken() {
         val editText = binding.authEditText
         editText.error = getString(R.string.error_text)
     }
-    companion object {
-        const val KEY_STRING = "key"
-        const val USER_KEY = "user"
-        fun createBundle(key: String, user: String): Bundle {
-            return Bundle().apply {
-                putString(KEY_STRING, key)
-                putString(USER_KEY, user)
-            }
-        }
+
+    private fun FragmentAuthorizationBinding.showLoading() {
+        binding.textSign.visibility = View.INVISIBLE
+        binding.load.visibility = View.VISIBLE
     }
-    private fun showLoading(button: TextView, load: ProgressBar){
-        button.visibility = View.INVISIBLE
-        load.visibility = View.VISIBLE
-    }
-    private fun AuthFragmentBinding.transition(){
+
+    private fun FragmentAuthorizationBinding.setupButton() {
         binding.buttonSign.setOnClickListener {
             inputToken = getTextInput()
             Log.d("input", inputToken)
-            viewModel.responseAuth(inputToken)
-            showLoading(binding.textSign, binding.load)
-
-            viewModel.user.observe(viewLifecycleOwner, Observer { user ->
-                if (user != null) {
-                    name = user.login
-                    if (viewModel.requestData(name, inputToken)) {
-                        invalidToken()
-                    } else {
-                        openRepos(inputToken)
-                        Log.d("name", name)
-                    }
-                } else {
-                    invalidToken()
+            if (isValid(inputToken)){
+                if(viewModel.responseAuth(inputToken)){
+                    showLoading()
                 }
-            })
+                else{
+
+                }
+            }
+            else {
+                onInvalidToken()
+            }
+        }
+    }
+    private fun FragmentAuthorizationBinding.setupViewModel(){
+        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
+                name = user.login
+                if (viewModel.requestData(name, inputToken)) {
+                    onInvalidToken()
+                } else {
+                    openRepos(inputToken, name)
+                    Log.d("name", name)
+                }
+            } else {
+                onInvalidToken()
+            }
+        })
+    }
+    private fun isValid(input: String): Boolean {
+        val regex = "^[a-zA-Z0-9_]+$".toRegex()
+        return regex.matches(input)
+    }
+
+    companion object {
+        const val USER_INPUT_KEY = "key"
+        const val USER_NAME_KEY = "user"
+        fun createBundle(key: String, user: String): Bundle {
+            return Bundle().apply {
+                putString(USER_INPUT_KEY, key)
+                putString(USER_NAME_KEY, user)
+            }
         }
     }
 }

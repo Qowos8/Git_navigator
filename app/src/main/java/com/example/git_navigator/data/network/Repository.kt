@@ -13,6 +13,6 @@ data class Repository(
     @SerialName("language")
     val language: String,
     @SerialName("description")
-    val description: String
+    val description: String?
 )
 

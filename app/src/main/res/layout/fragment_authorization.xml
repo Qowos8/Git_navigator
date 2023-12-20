@@ -25,7 +25,8 @@
         android:maxHeight="90dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:boxStrokeErrorColor="@color/error_color">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/auth_editText"
@@ -40,7 +41,9 @@
             android:singleLine="true"
             android:textColorHint="@color/blue_line"
             app:errorEnabled="true"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView

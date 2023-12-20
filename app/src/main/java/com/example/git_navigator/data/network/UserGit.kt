@@ -2,7 +2,6 @@ package com.example.git_navigator.data.network
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
 @Serializable
 class UserGit(
     @SerialName("id")
@@ -11,6 +10,4 @@ class UserGit(
     val login: String,
     @SerialName("name")
     val name: String?,
-    @SerialName("email")
-    val email: String?,
 )

@@ -5,53 +5,57 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.git_navigator.data.network.GitHubService
 import com.example.git_navigator.data.network.Repository
-import com.example.git_navigator.data.network.RetrofitBuilder
+import com.example.git_navigator.data.network.RetrofitModule
 import com.example.git_navigator.data.network.UserGit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor() : ViewModel() {
+    private val _authState = MutableLiveData<AuthState>()
+    val authState: LiveData<AuthState> get() = _authState
     private val _repList = MutableLiveData<List<Repository>?>()
-    val repList: LiveData<List<Repository>?> get () = _repList
+    val repList: LiveData<List<Repository>?> get() = _repList
+
     private val _user = MutableLiveData<UserGit?>()
     val user: LiveData<UserGit?> get() = _user
-    fun responseAuth(authToken: String) {
-        var rs: UserGit? = null
+    fun responseAuth(authToken: String): Boolean {
+        var result: Boolean = false
         viewModelScope.launch {
             try {
-                rs = RetrofitBuilder.create(authToken).getUser()
+                val rs = RetrofitModule.create(authToken).getUser()
                 _user.value = rs
-                Log.d("user", "${user.value}")
+                _authState.value = AuthState.SuccessUser(rs)
+                result = true
+                //callback(true, rs.login)
+                Log.d("user", "${authState.value}")
             } catch (e: Exception) {
-                Log.d("Auth", "Fail")
+                //callback(false, null)
+                _authState.value = AuthState.ErrorUser
+                Log.d("responseAuth", "error: ${e.message}")
             }
-
         }
+        return result
     }
+
+
     fun requestData(name: String, authToken: String): Boolean {
-        var isSuccess = false
+        var result: Boolean = false
         viewModelScope.launch {
             try {
-                val response = RetrofitBuilder.create(authToken).getUserRepos(name)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        val repositories = body.take(10)
-                        _repList.value = repositories
-                        isSuccess = true
-                    }
-                } else {
-                    Log.d("fun response", "response failed")
-                }
+                val response = RetrofitModule.create(authToken).getUserRepos(name)
+                val repositories = response.take(10)
+                _authState.value = AuthState.SuccessRepos(repositories)
+                result = true
+                _repList.value = repositories
+                Log.d("requestData", "Success: ${repositories.size} repositories")
             } catch (e: Exception) {
+                _authState.value = AuthState.ErrorRepos
                 Log.d("response", "${e.message}")
             }
         }
-        return isSuccess
+        return result
     }
 }

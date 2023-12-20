@@ -1,36 +1,38 @@
 package com.example.git_navigator.data.network
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
-import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
+
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object RetrofitBuilder {
+object RetrofitModule {
     private const val BASE_URL = "https://api.github.com/"
+    private const val JSON_MIME_TYPE = "application/json"
+    val json = Json{ignoreUnknownKeys = true}
+
     @Provides
-    @ViewModelScoped
     fun create (@Named("authToken") authToken: String): GitHubService {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(AuthorizationInterceptor(authToken))
             .build()
 
-        val retrofit = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl("https://api.github.com/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory(JSON_MIME_TYPE.toMediaType()))
             .client(client)
             .build()
-
-        return retrofit.create(GitHubService::class.java)
+            .create(GitHubService::class.java)
     }
 }

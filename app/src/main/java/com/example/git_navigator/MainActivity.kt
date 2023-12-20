@@ -3,6 +3,7 @@ package com.example.git_navigator
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.example.git_navigator.R
 import com.example.git_navigator.presentation.authorization.AuthFragment
 import dagger.hilt.android.AndroidEntryPoint
