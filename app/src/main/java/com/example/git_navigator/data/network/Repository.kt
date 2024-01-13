@@ -11,8 +11,10 @@ data class Repository(
     @SerialName("name")
     val name: String,
     @SerialName("language")
-    val language: String,
+    val language: String?,
     @SerialName("description")
-    val description: String?
+    val description: String?,
+    @SerialName("size")
+    val size: Int
 )
 

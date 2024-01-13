@@ -20,11 +20,11 @@ class ListAdapter(val name: String): RecyclerView.Adapter<ListAdapter.ListViewHo
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        holder.bind(items!![position])
+        holder.bind(items[position])
     }
 
-    override fun getItemCount(): Int = items?.size ?: 0
-    class ListViewHolder(val binding: FragmentRecyclerBinding): RecyclerView.ViewHolder(binding.root) {
+    override fun getItemCount(): Int = items.size
+    class ListViewHolder(private val binding: FragmentRecyclerBinding): RecyclerView.ViewHolder(binding.root) {
         val name: TextView = binding.nameRep
         val language: TextView = binding.language
         val review: TextView = binding.review

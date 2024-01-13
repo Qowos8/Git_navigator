@@ -14,6 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor() : ViewModel() {
+    val sharedData1 = MutableLiveData <String>()
+    val sharedData2 = MutableLiveData <String>()
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> get() = _authState
     private val _repList = MutableLiveData<List<Repository>?>()
@@ -21,8 +23,8 @@ class AuthViewModel @Inject constructor() : ViewModel() {
 
     private val _user = MutableLiveData<UserGit?>()
     val user: LiveData<UserGit?> get() = _user
-    fun responseAuth(authToken: String): Boolean {
-        var result: Boolean = false
+    fun responseAuth(authToken: String): Boolean? {
+        var result: Boolean? = false
         viewModelScope.launch {
             try {
                 val rs = RetrofitModule.create(authToken).getUser()
@@ -39,8 +41,6 @@ class AuthViewModel @Inject constructor() : ViewModel() {
         }
         return result
     }
-
-
     fun requestData(name: String, authToken: String): Boolean {
         var result: Boolean = false
         viewModelScope.launch {

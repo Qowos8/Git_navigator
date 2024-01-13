@@ -1,6 +1,9 @@
 package com.example.git_navigator.presentation.authorization
+
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -8,16 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.git_navigator.R
 import com.example.git_navigator.databinding.FragmentAuthorizationBinding
-import com.example.git_navigator.presentation.repository_list.RepositoriesListFragment
+import com.example.git_navigator.presentation.main_page.MainPageFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class AuthFragment : Fragment(), InputInterf {
@@ -26,6 +28,9 @@ class AuthFragment : Fragment(), InputInterf {
     private lateinit var inputToken: String
     private val viewModel: AuthViewModel by viewModels()
     private val textWatcher = createTextWatcher()
+    private lateinit var pref: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +38,8 @@ class AuthFragment : Fragment(), InputInterf {
     ): View {
         super.onCreate(savedInstanceState)
         binding = FragmentAuthorizationBinding.inflate(inflater, container, false)
+        pref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        editor = pref.edit()
         binding.apply {
             authEditText.addTextChangedListener(textWatcher)
             setupButton()
@@ -57,13 +64,18 @@ class AuthFragment : Fragment(), InputInterf {
 
     override fun getTextInput(): String {
         val inputToken = binding.authEditText.text.toString()
+        editor.apply {
+            putString("token", inputToken)
+            apply()
+        }
         Log.d("getTextInput", inputToken)
         return inputToken
     }
 
     override fun openRepos(input: String, login: String) {
-        val fragment = RepositoriesListFragment()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val fragment = MainPageFragment()
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
         val bundle = createBundle(input, login)
         fragment.arguments = bundle
@@ -82,44 +94,55 @@ class AuthFragment : Fragment(), InputInterf {
     private fun FragmentAuthorizationBinding.showLoading() {
         binding.textSign.visibility = View.INVISIBLE
         binding.load.visibility = View.VISIBLE
+        Handler().postDelayed({
+            binding.textSign.visibility = View.VISIBLE
+            binding.load.visibility = View.GONE
+        }, 1000)
     }
 
     private fun FragmentAuthorizationBinding.setupButton() {
         binding.buttonSign.setOnClickListener {
             inputToken = getTextInput()
             Log.d("input", inputToken)
-            if (isValid(inputToken)){
+            if (isValid(inputToken)) {
                 showLoading()
-                if(viewModel.responseAuth(inputToken)){
-
-                }
-                else{
-
-                }
-            }
-            else {
-                onInvalidToken()
-            }
-        }
-    }
-    private fun FragmentAuthorizationBinding.setupViewModel(){
-        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
-            if (user != null) {
-                name = user.login
-                if (viewModel.requestData(name, inputToken)) {
-                    onInvalidToken()
-                } else {
-                    openRepos(inputToken, name)
-                    Log.d("name", name)
+                if (viewModel.responseAuth(inputToken) == true) {
+                    showAlert()
                 }
             } else {
                 onInvalidToken()
             }
+        }
+    }
+
+    private fun FragmentAuthorizationBinding.setupViewModel() {
+        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
+                name = user.login
+                editor.apply {
+                    putString("login", name)
+                    apply()
+                }
+                viewModel.sharedData2.value = (name)
+                openRepos(inputToken, name)
+                Log.d("name", name)
+            } else {
+                showAlert()
+            }
         })
     }
+
     private fun isValid(input: String): Boolean {
         val regex = "^[a-zA-Z0-9_]+$".toRegex()
         return regex.matches(input)
+    }
+
+    private fun showAlert() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Error")
+            .setMessage("Error data / error code")
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     companion object {

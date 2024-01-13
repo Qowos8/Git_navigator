@@ -4,4 +4,11 @@
     <string name="personal_access_token">Personal access token</string>
     <string name="sign_in">SIGN IN</string>
     <string name="repositories">Repositories</string>
+    <string name="name_of_app">Git navigator</string>
+    <string name="profile_rus">Профиль</string>
+    <string name="mes_rus">Оповещения</string>
+    <string name="home_rus">Дом</string>
+    <string name="settings_rus">Настройки</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>
