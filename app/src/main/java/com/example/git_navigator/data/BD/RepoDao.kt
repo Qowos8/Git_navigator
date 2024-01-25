@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface RepoDao{
     @Query("SELECT * FROM ${RepoDB.Repository.TABLE_NAME}")
-    fun insertRepo(): List<RepoEntity>
+    suspend fun getRepo(): List<RepoEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun getRepo(repos: List<RepoEntity>)
+    suspend fun insertRepo(repos: List<RepoEntity>)
 }

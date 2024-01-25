@@ -5,24 +5,36 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.git_navigator.data.UseCase
 import com.example.git_navigator.data.network.Repository
 import com.example.git_navigator.data.network.RetrofitModule
 import com.example.git_navigator.data.network.UserGit
+import com.example.git_navigator.domain.GitNavigatorRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel() {
-    val sharedData1 = MutableLiveData <String>()
-    val sharedData2 = MutableLiveData <String>()
+class AuthViewModel @Inject constructor(repository: GitNavigatorRepository) : ViewModel() {
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> get() = _authState
+
+    val userNameSharedPref = MutableLiveData <String>()
+
     private val _repList = MutableLiveData<List<Repository>?>()
     val repList: LiveData<List<Repository>?> get() = _repList
 
     private val _user = MutableLiveData<UserGit?>()
     val user: LiveData<UserGit?> get() = _user
+    private val useCase = UseCase(repository)
+    fun saveUserName(name: String){
+        return useCase.saveUserName(name)
+    }
+
+    fun saveUserToken(token: String){
+        return useCase.saveUserToken(token)
+    }
+
     fun responseAuth(authToken: String): Boolean? {
         var result: Boolean? = false
         viewModelScope.launch {
@@ -31,12 +43,10 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                 _user.value = rs
                 _authState.value = AuthState.SuccessUser(rs)
                 result = true
-                //callback(true, rs.login)
                 Log.d("user", "${authState.value}")
             } catch (e: Exception) {
-                //callback(false, null)
                 _authState.value = AuthState.ErrorUser
-                Log.d("responseAuth", "error: ${e.message}")
+                Log.d("responseAuth", "error: ${e.printStackTrace()}")
             }
         }
         return result

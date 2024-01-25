@@ -375,24 +375,24 @@
                     app:layout_constraintTop_toBottomOf="@id/yblock" />
 
                 <ImageView
-                    android:id="@+id/chart_block"
+                    android:id="@+id/bar_block"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:layout_marginHorizontal="26dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
                     android:src="@drawable/border_block"
-                    app:layout_constraintEnd_toEndOf="@id/bar_commits"
-                    app:layout_constraintStart_toStartOf="@id/bar_commits"
+                    app:layout_constraintEnd_toEndOf="@id/size_bar"
+                    app:layout_constraintStart_toStartOf="@id/size_bar"
                     app:layout_constraintTop_toBottomOf="@id/stats" />
 
                 <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/bar_commits"
+                    android:id="@+id/size_bar"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:layout_marginHorizontal="29dp"
                     android:layout_marginTop="32dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/chart_block"
+                    app:layout_constraintTop_toTopOf="@id/bar_block"
                     />
 
                 <TextView
@@ -402,8 +402,71 @@
                     android:text="Статистика размеров"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@id/chart_block"
-                    app:layout_constraintTop_toTopOf="@id/chart_block" />
+                    app:layout_constraintStart_toStartOf="@id/bar_block"
+                    app:layout_constraintTop_toTopOf="@id/bar_block" />
+
+                <ImageView
+                    android:id="@+id/pie_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/border_block"
+                    app:layout_constraintEnd_toEndOf="@id/lang_pie"
+                    app:layout_constraintStart_toStartOf="@id/lang_pie"
+                    app:layout_constraintTop_toBottomOf="@id/commits_block" />
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/lang_pie"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:layout_marginHorizontal="29dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lang_description"
+                    />
+
+                <TextView
+                    android:id="@+id/lang_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Статистика использования языков"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/pie_block"
+                    app:layout_constraintTop_toTopOf="@id/pie_block" />
+                <ImageView
+                    android:id="@+id/commits_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/border_block"
+                    app:layout_constraintEnd_toEndOf="@id/lang_pie"
+                    app:layout_constraintStart_toStartOf="@id/lang_pie"
+                    app:layout_constraintTop_toBottomOf="@id/bar_block" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/commits_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:layout_marginHorizontal="29dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/commits_description"
+                    />
+
+                <TextView
+                    android:id="@+id/commits_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Статистика изменений"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/commits_block"
+                    app:layout_constraintTop_toTopOf="@id/commits_block" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -419,6 +482,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/navigation_bar" />
+        <TextView
+            android:id="@+id/langs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/upper_block"
+            app:layout_constraintBottom_toBottomOf="@id/upper_block"
+            app:layout_constraintEnd_toEndOf="@id/upper_block"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
