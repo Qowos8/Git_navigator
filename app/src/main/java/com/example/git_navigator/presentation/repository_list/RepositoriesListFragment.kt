@@ -56,7 +56,7 @@ class RepositoriesListFragment : Fragment() {
 
     fun setAdapter(state: AuthState) = when (state) {
         is AuthState.SuccessRepos -> {
-            repo = state.repositories.take(10)
+            repo = state.repository.take(10)
             Log.d("repo", "$repo")
         }
 

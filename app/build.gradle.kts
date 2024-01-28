@@ -69,5 +69,7 @@ dependencies {
     implementation(libs.mpandroidchart)
     implementation (libs.androidx.room.ktx)
     implementation (libs.androidx.room.runtime)
+    implementation (libs.kotlinx.coroutines.android.v150)
+    implementation (libs.kotlinx.coroutines.core)
 
 }

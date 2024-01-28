@@ -1,6 +1,5 @@
 package com.example.git_navigator.presentation.authorization
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -9,11 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.example.git_navigator.R
 import com.example.git_navigator.databinding.FragmentAuthorizationBinding
 import com.example.git_navigator.presentation.main_page.MainPageFragment
@@ -43,10 +40,7 @@ class AuthFragment : Fragment(), InputInterf {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            setupButton()
-            setupViewModel()
-        }
+        binding.setupButton()
     }
 
     private fun createTextWatcher(): TextWatcher {
@@ -62,40 +56,45 @@ class AuthFragment : Fragment(), InputInterf {
             }
         }
     }
+
     private fun FragmentAuthorizationBinding.setupButton() {
         binding.buttonSign.setOnClickListener {
             inputToken = getTextInput()
-            Log.d("input", inputToken)
-            if (isValid(inputToken)) {
-                showLoading()
-                if (viewModel.responseAuth(inputToken) == true) {
-                    showAlert()
+            viewModel.responseAuth(inputToken)
+            if (viewModel.inputCheck(inputToken)) {
+                viewModel.authState.observe(viewLifecycleOwner) { state ->
+                    when (state) {
+                        is AuthState.LoadingUser -> {
+                            showLoading()
+                        }
+
+                        is AuthState.SuccessUser -> {
+                            name = state.user.login
+                            viewModel.apply {
+                                saveUserName(name)
+                                userNameSharedPref.value = (name)
+                            }
+                            openRepos(inputToken, name)
+                        }
+
+                        is AuthState.ErrorUser -> {
+                            Log.d("AuthState", "Error ${state.errorMessage}")
+                        }
+
+                        else -> {}
+                    }
                 }
-            } else {
-                onInvalidToken()
             }
         }
     }
-    private fun FragmentAuthorizationBinding.setupViewModel() {
-        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
-            if (user != null) {
-                name = user.login
-                viewModel.apply {
-                    saveUserName(name)
-                    userNameSharedPref.value = (name)
-                }
-                openRepos(inputToken, name)
-            } else {
-                showAlert()
-            }
-        })
-    }
+
     override fun getTextInput(): String {
         val inputToken = binding.authEditText.text.toString()
         viewModel.saveUserToken(inputToken)
         Log.d("getTextInput", inputToken)
         return inputToken
     }
+
     override fun openRepos(input: String, login: String) {
         val fragment = MainPageFragment()
         closeInput(requireContext(), requireView())
@@ -108,7 +107,7 @@ class AuthFragment : Fragment(), InputInterf {
             .commit()
     }
 
-    private fun FragmentAuthorizationBinding.showLoading() {
+    private fun showLoading() {
         binding.apply {
             textSign.visibility = View.INVISIBLE
             load.visibility = View.VISIBLE
@@ -124,10 +123,6 @@ class AuthFragment : Fragment(), InputInterf {
     override fun onInvalidToken() {
         val editText = binding.authEditText
         editText.error = getString(R.string.error_text)
-    }
-    private fun isValid(input: String): Boolean {
-        val regex = "^[a-zA-Z0-9_]+$".toRegex()
-        return regex.matches(input)
     }
 
     private fun showAlert() {

@@ -8,4 +8,6 @@ interface GitNavigatorRepository {
 
     fun saveUserToken(token: String)
     fun getUserToken(): String
+
+    fun inputCheck(input: String): Boolean
 }

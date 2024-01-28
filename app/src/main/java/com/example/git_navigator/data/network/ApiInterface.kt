@@ -10,6 +10,6 @@ interface GitHubService {
     @GET("user")
     suspend fun getUser(): UserGit
 
-    @GET("/repos/{username}/{repo}/commits")
+    @GET("repos/{username}/{repo}/commits")
     suspend fun getCommits(@Path("username") user: String, @Path("repo") repoName: String): List<Commit>
 }

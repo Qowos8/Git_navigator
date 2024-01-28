@@ -1,26 +1,32 @@
 package com.example.git_navigator.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.git_navigator.domain.GitNavigatorModule
 import com.example.git_navigator.domain.GitNavigatorRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GitNavigatorRepoImplement @Inject constructor(val repository: GitNavigatorModule, @ApplicationContext val context: Context): GitNavigatorRepository {
+class GitNavigatorRepoImplement @Inject constructor(private val sharedPreferences: SharedPreferences, @ApplicationContext val context: Context): GitNavigatorRepository {
     override fun saveUserName(userName: String) {
-        repository.provideSharedPreferences(context).edit().putString("name", userName).apply()
+        sharedPreferences.edit().putString("name", userName).apply()
     }
 
     override fun getUserName(): String {
-        return repository.provideSharedPreferences(context).getString("name", "") ?: ""
+        return sharedPreferences.getString("name", "") ?: ""
     }
 
     override fun saveUserToken(token: String) {
-        repository.provideSharedPreferences(context).edit().putString("password", token).apply()
+        sharedPreferences.edit().putString("password", token).apply()
     }
 
     override fun getUserToken(): String {
-        return repository.provideSharedPreferences(context).getString("password", "") ?: ""
+        return sharedPreferences.getString("password", "") ?: ""
+    }
+
+    override fun inputCheck(input: String): Boolean {
+        val regex = "^[a-zA-Z0-9_]+$".toRegex()
+        return regex.matches(input)
     }
 
 }

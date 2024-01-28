@@ -13,12 +13,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
-class GitNavigatorModule @Inject constructor() {
+@InstallIn(SingletonComponent::class)
+object GitNavigatorModule {
+
     @Provides
-    fun provideGitNavigatorRepository(repository: GitNavigatorModule, @ApplicationContext context: Context): GitNavigatorRepository {
-        return GitNavigatorRepoImplement(repository, context)
+    fun provideGitNavigatorRepository(repoImpl: GitNavigatorRepoImplement): GitNavigatorRepository {
+        return repoImpl
     }
+
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)

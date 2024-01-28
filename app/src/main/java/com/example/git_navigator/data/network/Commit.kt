@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Commit(
-    @SerialName("name")
-    val name: String,
-    @SerialName("id")
-    val id: Int,
+    @SerialName("sha")
+    val sha: String,
+    @SerialName("node_id")
+    val id: String,
     @SerialName("url")
     val url: String
 )
