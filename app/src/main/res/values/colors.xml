@@ -5,5 +5,20 @@
     <color name="blue_line">#58A6FF</color>
     <color name="error_color">#B00020</color>
     <color name="background_color">#0D1117</color>
+    <color name="block_color">#161C24</color>
+    <color name="red_block">#EF4040</color>
+    <color name="green_block">#5EB151</color>
+    <color name="blue_block">#6A81BB</color>
+    <color name="pink_block">#B9659C</color>
+    <color name="yellow_block">#B4AA51</color>
+    <color name="bir_block">#5BA39A</color>
+    <color name="bottom_text">#9AA0A6</color>
+    <color name="chart_color">#1A222D</color>
+    <color name="bar_color_red">#FA4E6D</color>
+    <color name="bar_color_blue">#98CCFD</color>
+    <color name="bar_color_yellow">#FDE798</color>
+    <color name="bar_color_green">#74FF82</color>
+    <color name="bar_color_purple">#D274FF</color>
+
 
 </resources>

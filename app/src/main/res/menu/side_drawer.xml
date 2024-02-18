@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/block_color"
+    tools:showIn = "navigation_view"
+    >
+
+    <group
+        android:checkableBehavior="all">
+        <item
+            android:id="@+id/userLogin"
+            android:title="UserLogi"
+            android:icon="@drawable/home"/>
+    </group>
+    <group
+        android:checkableBehavior="all">
+    <item
+        android:id="@+id/bell"
+        android:title="@string/profile_rus"
+        android:icon="@drawable/whitehome"/>
+    <item
+        android:id="@+id/chat_fragment"
+        android:title="Оповещения"
+        android:icon="@drawable/whitebell"/>
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings_rus"
+        android:icon="@drawable/settings"/>
+    </group>
+    <item
+        android:title="">
+        <menu>
+            <item
+                android:id = "@+id/exit"
+                android:title="Выйти"
+                android:icon="@drawable/logout"
+                />
+        </menu>
+    </item>
+</menu>

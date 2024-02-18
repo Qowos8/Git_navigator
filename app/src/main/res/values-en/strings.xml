@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title">Error</string>
+    <string name="error_message">Error data / error code</string>
+    <string name="error_text">Invalid token</string>
+    <string name="personal_access_token">Personal access token</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="repositories">Repositories</string>
+    <string name="name_of_app">Git navigator</string>
+    <string name="profile_rus">Profile</string>
+    <string name="mes_rus">Messages</string>
+    <string name="home_rus">Home</string>
+    <string name="settings_rus">Settings</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+</resources>

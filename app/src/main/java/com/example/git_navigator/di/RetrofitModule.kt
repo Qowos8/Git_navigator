@@ -1,5 +1,7 @@
-package com.example.git_navigator.data.network
+package com.example.git_navigator.di
 
+import com.example.git_navigator.data.network.AuthorizationInterceptor
+import com.example.git_navigator.data.network.GitHubService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -22,6 +24,7 @@ object RetrofitModule {
     val json = Json{ignoreUnknownKeys = true}
 
     @Provides
+    @Singleton
     fun create (@Named("authToken") authToken: String): GitHubService {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -29,7 +32,7 @@ object RetrofitModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(json.asConverterFactory(JSON_MIME_TYPE.toMediaType()))
             .client(client)
             .build()

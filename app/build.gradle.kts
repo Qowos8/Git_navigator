@@ -9,6 +9,7 @@ apply{
     plugin ("dagger.hilt.android.plugin")
     plugin ("com.android.application")
 }
+
 android {
     namespace = "com.example.git_navigator"
     compileSdk = 34
@@ -39,8 +40,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
 
+}
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -55,18 +56,22 @@ dependencies {
     implementation (libs.okhttp)
     implementation (libs.logging.interceptor)
     implementation (libs.glide)
-    //implementation (libs.converter.gson)
     implementation (libs.kotlinx.coroutines.android)
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation (libs.androidx.fragment.ktx)
-    //implementation (libs.androidx.hilt.lifecycle.viewmodel)
     kapt (libs.androidx.hilt.compiler)
     implementation (libs.google.dagger.hilt.android)
     kapt (libs.google.dagger.compiler)
-    //implementation (libs.kotlinx.serialization.json.v160)
-    //implementation (libs.converter.moshi)
-    //implementation (libs.converter.kotlinx.serialization)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation (libs.lottie)
+    implementation (libs.material.v1110)
+    implementation(libs.mpandroidchart)
+
+    implementation (libs.androidx.room.ktx)
+    implementation (libs.androidx.room.runtime)
+
+    implementation (libs.kotlinx.coroutines.android.v150)
+    implementation (libs.kotlinx.coroutines.core)
 
 }
