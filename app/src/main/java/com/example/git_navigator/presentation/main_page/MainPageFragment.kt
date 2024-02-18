@@ -29,7 +29,6 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,8 +45,8 @@ class MainPageFragment @Inject constructor() : Fragment(),
     private var sizes: MutableList<Int> = mutableListOf()
     private var repoNames: MutableList<String> = emptyList<String>().toMutableList()
 
-    private var languages: MutableList<String> = emptyList<String>().toMutableList()
-    private var langCount: MutableMap<String, Int> = emptyMap<String, Int>().toMutableMap()
+    private var languages: MutableList<String> = mutableListOf()
+    private var langCount: MutableMap<String, Int> = mutableMapOf()
 
     private var commitsCount: MutableList<Int> = mutableListOf()
 

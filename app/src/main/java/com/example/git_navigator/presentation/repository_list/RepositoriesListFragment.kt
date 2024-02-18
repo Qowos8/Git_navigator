@@ -54,7 +54,7 @@ class RepositoriesListFragment : Fragment() {
         viewModel.requestData(login, token)
     }
 
-    fun setAdapter(state: AuthState) = when (state) {
+    /*fun setAdapter(state: AuthState) = when (state) {
         is AuthState.SuccessRepos -> {
             repo = state.repository.take(10)
             Log.d("repo", "$repo")
@@ -63,5 +63,5 @@ class RepositoriesListFragment : Fragment() {
         else -> {
             Log.d("setAdapter", "fail")
         }
-    }
+    }*/
 }

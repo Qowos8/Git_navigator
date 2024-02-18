@@ -1,13 +1,16 @@
-package com.example.git_navigator.data
+package com.example.git_navigator.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.git_navigator.domain.GitNavigatorModule
-import com.example.git_navigator.domain.GitNavigatorRepository
+import com.example.git_navigator.domain.repository.GitNavigatorRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GitNavigatorRepoImplement @Inject constructor(private val sharedPreferences: SharedPreferences, @ApplicationContext val context: Context): GitNavigatorRepository {
+class GitNavigatorRepoImplement @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
+    @ApplicationContext val context: Context
+) : GitNavigatorRepository {
+
     override fun saveUserName(userName: String) {
         sharedPreferences.edit().putString("name", userName).apply()
     }

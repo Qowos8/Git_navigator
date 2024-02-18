@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.git_navigator.R
 import com.example.git_navigator.databinding.FragmentAuthorizationBinding
 import com.example.git_navigator.presentation.main_page.MainPageFragment
@@ -24,8 +25,6 @@ class AuthFragment : Fragment(), InputInterf {
     private val viewModel: AuthViewModel by viewModels()
 
     private val textWatcher = createTextWatcher()
-    private lateinit var name: String
-    private lateinit var inputToken: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,36 +51,40 @@ class AuthFragment : Fragment(), InputInterf {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                inputToken = p0.toString()
+                val inputToken = p0.toString()
             }
         }
     }
 
     private fun FragmentAuthorizationBinding.setupButton() {
+        var name = ""
+        var inputToken: String = ""
         binding.buttonSign.setOnClickListener {
             inputToken = getTextInput()
             viewModel.responseAuth(inputToken)
             if (viewModel.inputCheck(inputToken)) {
-                viewModel.authState.observe(viewLifecycleOwner) { state ->
-                    when (state) {
-                        is AuthState.LoadingUser -> {
-                            showLoading()
-                        }
-
-                        is AuthState.SuccessUser -> {
-                            name = state.user.login
-                            viewModel.apply {
-                                saveUserName(name)
-                                userNameSharedPref.value = (name)
+                lifecycleScope.launchWhenStarted {
+                    viewModel.authState.collect { state ->
+                        when (state) {
+                            is AuthState.LoadingUser -> {
+                                showLoading()
                             }
-                            openRepos(inputToken, name)
-                        }
 
-                        is AuthState.ErrorUser -> {
-                            Log.d("AuthState", "Error ${state.errorMessage}")
-                        }
+                            is AuthState.SuccessUser -> {
+                                name = state.user.login
+                                viewModel.apply {
+                                    saveUserName(name)
+                                    userNameSharedPref.value = (name)
+                                }
+                                openRepos(inputToken, name)
+                            }
 
-                        else -> {}
+                            is AuthState.ErrorUser -> {
+                                Log.d("AuthState", "Error ${state.errorMessage}")
+                            }
+
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -127,9 +130,9 @@ class AuthFragment : Fragment(), InputInterf {
 
     private fun showAlert() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Error")
-            .setMessage("Error data / error code")
-            .setPositiveButton("OK", null)
+            .setTitle(R.string.error_title)
+            .setMessage(R.string.error_message)
+            .setPositiveButton(R.string.button_ok, null)
             .show()
     }
 

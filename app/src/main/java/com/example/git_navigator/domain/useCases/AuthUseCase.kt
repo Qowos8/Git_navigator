@@ -1,6 +1,6 @@
-package com.example.git_navigator.data.useCases
+package com.example.git_navigator.domain.useCases
 
-import com.example.git_navigator.domain.GitNavigatorRepository
+import com.example.git_navigator.domain.repository.GitNavigatorRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

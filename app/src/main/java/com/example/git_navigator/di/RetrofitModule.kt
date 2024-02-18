@@ -1,5 +1,7 @@
-package com.example.git_navigator.data.network
+package com.example.git_navigator.di
 
+import com.example.git_navigator.data.network.AuthorizationInterceptor
+import com.example.git_navigator.data.network.GitHubService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

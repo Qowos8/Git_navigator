@@ -1,24 +1,28 @@
 package com.example.git_navigator.presentation.authorization
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.git_navigator.data.useCases.AuthUseCase
+import com.example.git_navigator.domain.useCases.AuthUseCase
 import com.example.git_navigator.data.network.Repository
-import com.example.git_navigator.data.network.RetrofitModule
+import com.example.git_navigator.di.RetrofitModule
 import com.example.git_navigator.data.network.UserGit
-import com.example.git_navigator.domain.GitNavigatorRepository
+import com.example.git_navigator.domain.repository.GitNavigatorRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(repository: GitNavigatorRepository) : ViewModel() {
-    private val _authState = MutableLiveData<AuthState>()
-    val authState: LiveData<AuthState> get() = _authState
+    private val _authState = MutableStateFlow<AuthState>(AuthState.LoadingUser)
+    val authState: StateFlow<AuthState> get() = _authState
+
+    private val _reposState = MutableStateFlow<AuthState>(AuthState.LoadingUser)
+    val reposState: StateFlow<AuthState> get() = _authState
 
     val userNameSharedPref = MutableLiveData <String>()
 
@@ -48,13 +52,13 @@ class AuthViewModel @Inject constructor(repository: GitNavigatorRepository) : Vi
             try {
                 val rs = RetrofitModule.create(authToken).getUser()
                 _user.value = rs
-                _authState.value = AuthState.SuccessUser(rs)
+                _authState.emit(AuthState.SuccessUser(rs))
                 result = true
             } catch (e: Exception) {
                 if(e is CancellationException){
                     throw e
                 }
-                _authState.value = AuthState.ErrorUser("Exception: ${e.message}")
+                _authState.emit(AuthState.ErrorUser("Exception: ${e.message}"))
             }
         }
         return result
@@ -65,14 +69,14 @@ class AuthViewModel @Inject constructor(repository: GitNavigatorRepository) : Vi
             try {
                 val response = RetrofitModule.create(authToken).getUserRepos(name)
                 val repositories = response.take(10)
-                _authState.value = AuthState.SuccessRepos(repositories)
+                _reposState.emit(ReposState.SuccessRepos(repositories))
                 result = true
                 _repList.value = repositories
             } catch (e: Exception) {
                 if(e is CancellationException){
                     throw e
                 }
-                _authState.value = AuthState.ErrorRepos("Exception: ${e.message}")
+                _reposState.emit(ReposState.ErrorRepos("Exception: ${e.message}"))
             }
         }
         return result

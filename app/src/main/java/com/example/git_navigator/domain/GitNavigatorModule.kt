@@ -2,15 +2,13 @@ package com.example.git_navigator.domain
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.git_navigator.data.GitNavigatorRepoImplement
+import com.example.git_navigator.data.repository.GitNavigatorRepoImplement
+import com.example.git_navigator.domain.repository.GitNavigatorRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

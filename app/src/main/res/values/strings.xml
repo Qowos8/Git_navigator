@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Git_Navigator</string>
-    <string name="error_text">Invalid token</string>
-    <string name="personal_access_token">Personal access token</string>
+    <string name="app_name" translatable="false">Git_Navigator</string>
+    <string name="error_title">Ошибка</string>
+    <string name="error_message">Ошибка данных / ошибка кода</string>
+    <string name="button_ok" translatable="false">OK</string>
+    <string name="error_text">Не правильный токен</string>
+    <string name="personal_access_token">Персональный ключ доступа</string>
     <string name="sign_in">SIGN IN</string>
     <string name="repositories">Repositories</string>
     <string name="name_of_app">Git navigator</string>
@@ -9,6 +12,6 @@
     <string name="mes_rus">Оповещения</string>
     <string name="home_rus">Дом</string>
     <string name="settings_rus">Настройки</string>
-    <string name="open">Open</string>
-    <string name="close">Close</string>
+    <string name="open">Открыть</string>
+    <string name="close">Закрыть</string>
 </resources>

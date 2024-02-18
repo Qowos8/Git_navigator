@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.git_navigator.data.network.Commit
 import com.example.git_navigator.data.network.Repository
-import com.example.git_navigator.data.network.RetrofitModule
-import com.example.git_navigator.data.useCases.AuthUseCase
-import com.example.git_navigator.domain.GitNavigatorRepository
+import com.example.git_navigator.di.RetrofitModule
+import com.example.git_navigator.domain.useCases.AuthUseCase
+import com.example.git_navigator.domain.repository.GitNavigatorRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch

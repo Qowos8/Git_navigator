@@ -1,4 +1,4 @@
-package com.example.git_navigator.domain
+package com.example.git_navigator.domain.repository
 
 
 interface GitNavigatorRepository {
